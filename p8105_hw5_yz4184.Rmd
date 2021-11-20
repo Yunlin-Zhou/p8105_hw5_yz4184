@@ -1,0 +1,72 @@
+---
+title: "p8105_hw5_yz4184"
+author: "Yunlin Zhou"
+date: "11/20/2021"
+output: github_document
+---
+
+```{r echo = FALSE}
+library(tidyverse)
+library(rvest)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+
+### Problem 2
+
+```{r}
+file_names = list.files(path = "./data")
+```
+
+
+```{r}
+import_data = function(x){
+  x = read_csv(x)
+  return(x)
+}
+
+output =  map(file_names, import_data)
+
+arms_df = bind_rows(output)%>%
+  mutate(file_names)%>%
+  nest(week_change = week_1 :week_8)
+```
+
+
+```{r}
+library(stringr)
+
+arms_df2 = arms_df%>%
+  unnest(week_change)%>%
+  separate(file_names, into = c("type", "id"), sep = "_")%>%
+  mutate(type = str_replace(type, "con", "control_arm"),
+         type = str_replace(type, "exp", "experimental_arm"),
+         id = gsub(".csv","", x=id))%>%
+  pivot_longer(
+    week_1:week_8,
+    names_to = "week", 
+    values_to = "score")%>%
+  mutate(week = sub("week_","", week),
+         week = as.numeric(week))
+
+ggplot(arms_df2, aes(x = week, y = score, color = id)) + 
+  geom_line() + 
+  facet_grid(. ~ type)
+
+```
+
