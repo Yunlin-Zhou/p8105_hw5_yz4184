@@ -177,7 +177,7 @@ ggplot(arms_df2, aes(x = week, y = score, color = id)) +
 
 ```
 
-
+The data in control_arm group  changed over the time but it is approximately stable. The data in experimental_arm group has a obvious increasing trend.
 
 ### Problem 3
 
