@@ -193,23 +193,16 @@ iris_with_missing = iris %>%
 ```
 
 ```{r}
-iris_with_missing = iris_with_missing%>%
-  janitor::clean_names()
-
-
-replace_missing = function(vector){
+fill_iris_missing = function(vector){
   if(is.numeric(vector)){
-    vector = ifelse(is.na(vector),mean(vector, na.rm = TRUE),vector)
+    vector= replace_na(vector, mean(vector, na.rm = TRUE))
   }
-  
-  
-  
   if(is.character(vector)){
-  vector = ifelse(is.na(vector),"viginica",vector)
+    vector= replace_na(vector, "virginica")
   }
   return(vector)
 }
 
-map(iris_with_missing, replace_missing)
+map(iris_with_missing, fill_iris_missing)
 ```
 
